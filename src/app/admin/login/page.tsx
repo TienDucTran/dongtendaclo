@@ -1,26 +1,46 @@
 'use client';
 
 import React, { useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
 
-export default function LoginPage() {
+export default function AdminLoginPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect') || '/admin';
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
-    
-    // TODO: Implement login logic
-    console.log('Login:', { email, password });
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    try {
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        setError('Email hoặc mật khẩu không đúng. Vui lòng thử lại.');
+        setIsLoading(false);
+        return;
+      }
+
+      router.push(redirect);
+      router.refresh();
+    } catch (err) {
+      setError('Có lỗi xảy ra. Vui lòng thử lại.');
       setIsLoading(false);
-      // window.location.href = '/';
-    }, 1500);
+    }
   };
 
   return (
@@ -51,6 +71,13 @@ export default function LoginPage() {
           {/* Login Form */}
           <div className="px-12 pb-16">
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Error Message */}
+              {error && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+                  {error}
+                </div>
+              )}
+
               {/* Email Field */}
               <div className="space-y-2">
                 <label htmlFor="email" className="block text-sm font-serif text-gray-700">
@@ -68,8 +95,9 @@ export default function LoginPage() {
                     name="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="dat.phan"
+                    placeholder="admin@example.com"
                     required
+                    autoComplete="email"
                     className="w-full py-3 px-4 pl-10 bg-blue-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801C1C] focus:border-transparent text-gray-900 placeholder-gray-500"
                   />
                 </div>
@@ -94,6 +122,7 @@ export default function LoginPage() {
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
                     required
+                    autoComplete="current-password"
                     className="w-full py-3 px-4 pl-10 pr-10 bg-blue-50 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#801C1C] focus:border-transparent text-gray-900 placeholder-gray-500"
                   />
                   <button
@@ -137,15 +166,22 @@ export default function LoginPage() {
 
             {/* Forgot Password Link */}
             <div className="mt-6 text-center">
-              <Link href="/quen-mat-khau" className="text-sm text-gray-500 hover:text-[#801C1C] transition-colors">
+              <Link href="/admin/forgot-password" className="text-sm text-gray-500 hover:text-[#801C1C] transition-colors">
                 Quên mật khẩu?
               </Link>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Back to Home Link */}
         <div className="mt-6 text-center">
+          <Link href="/" className="text-sm text-gray-500 hover:text-[#801C1C] transition-colors">
+            ← Quay về trang chủ
+          </Link>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-4 text-center">
           <p className="text-sm text-gray-500">
             © 2024 Trung Tâm Mục Vụ Gia Đình Đắc Lộ
           </p>
