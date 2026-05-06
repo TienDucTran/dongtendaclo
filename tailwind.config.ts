@@ -9,7 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary colors from Figma
+        // Primary colors from Figma - Maroon/Burgundy
         primary: {
           DEFAULT: '#8B1D1D',
           50: '#FEF2F2',
@@ -23,63 +23,74 @@ const config: Config = {
           800: '#991B1B',
           900: '#7F1D1D',
         },
-        // Secondary/Accent colors
+        // Accent/Secondary - Orange from Figma
         accent: {
-          DEFAULT: '#EAB308',
-          50: '#FFFBEB',
-          100: '#FEF3C7',
-          200: '#FDE68A',
-          300: '#FCD34D',
-          400: '#FBBF24',
-          500: '#F59E0B',
-          600: '#D97706',
-          700: '#B45309',
-          800: '#92400E',
-          900: '#78350F',
+          DEFAULT: '#FB923C',
+          50: '#FFF7ED',
+          100: '#FFEDD5',
+          200: '#FED7AA',
+          300: '#FDBA74',
+          400: '#FB923C',
+          500: '#F97316',
+          600: '#EA580C',
+          700: '#C2410C',
+          800: '#9A3412',
+          900: '#7C2D12',
         },
-        // Neutral colors
-        gray: {
-          50: '#F9FAFB',
-          100: '#F3F4F6',
-          200: '#E5E7EB',
-          300: '#D1D5DB',
-          400: '#9CA3AF',
-          500: '#6B7280',
-          600: '#4B5563',
-          700: '#374151',
-          800: '#1F2937',
-          900: '#111827',
+        // Slate colors from Figma
+        slate: {
+          50: '#F8FAFC',
+          100: '#F1F5F9',
+          200: '#E2E8F0',
+          300: '#CBD5E1',
+          400: '#94A3B8',
+          500: '#64748B',
+          600: '#475569',
+          700: '#334155',
+          800: '#1E293B',
+          900: '#0F172A',
         },
         // Semantic colors
         success: '#10B981',
         warning: '#F59E0B',
         error: '#EF4444',
         info: '#3B82F6',
+        // Custom colors from Figma
+        'card-bg': '#FBF8FC',
+        'card-border': '#F1F5F9',
       },
       fontFamily: {
+        // Noto Serif is the primary font from Figma
+        serif: ['Noto Serif', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
-        serif: ['Playfair Display', 'Georgia', 'serif'],
       },
       fontSize: {
+        // Figma font sizes
         'display': ['72px', { lineHeight: '1', letterSpacing: '-0.02em' }],
-        'heading-1': ['36px', { lineHeight: '1.25', letterSpacing: '-0.02em' }],
-        'heading-2': ['30px', { lineHeight: '1.2', letterSpacing: '-0.01em' }],
-        'heading-3': ['24px', { lineHeight: '1.33', letterSpacing: '-0.01em' }],
+        'heading-1': ['48px', { lineHeight: '1.25', letterSpacing: '-0.02em' }],
+        'heading-2': ['36px', { lineHeight: '1.11', letterSpacing: '0' }],
+        'heading-3': ['24px', { lineHeight: '1.33', letterSpacing: '0' }],
         'heading-4': ['18px', { lineHeight: '1.55', letterSpacing: '0' }],
-        'body-lg': ['18px', { lineHeight: '1.62', letterSpacing: '0' }],
+        'body-lg': ['20px', { lineHeight: '1.4', letterSpacing: '0' }],
         'body': ['16px', { lineHeight: '1.5', letterSpacing: '0' }],
-        'body-sm': ['14px', { lineHeight: '1.43', letterSpacing: '0' }],
-        'caption': ['12px', { lineHeight: '1.33', letterSpacing: '0.01em' }],
+        'body-sm': ['14px', { lineHeight: '1.62', letterSpacing: '0' }],
+        'caption': ['12px', { lineHeight: '1.33', letterSpacing: '0.05em' }],
         'overline': ['10px', { lineHeight: '1.5', letterSpacing: '0.1em' }],
       },
       boxShadow: {
         'card': '0px 1px 2px 0px rgba(0, 0, 0, 0.05)',
         'card-hover': '0px 4px 12px 0px rgba(0, 0, 0, 0.1)',
+        'button': '0px 4px 6px -4px rgba(127, 29, 29, 0.2), 0px 10px 15px -3px rgba(127, 29, 29, 0.2)',
+        'header': '0px 1px 2px 0px rgba(0, 0, 0, 0.05)',
       },
       borderRadius: {
         'xl': '12px',
         '2xl': '16px',
         '3xl': '24px',
+      },
+      backgroundImage: {
+        'gradient-primary': 'linear-gradient(135deg, #8B1D1D 0%, #7F1D1D 100%)',
+        'gradient-card': 'linear-gradient(180deg, #FEF2F2 0%, #FFFFFF 100%)',
       },
     },
   },

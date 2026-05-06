@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: 'Mục Vụ Gia Đình Đắc Lộ | Dòng Tên Việt Nam',
@@ -21,8 +23,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="vi">
-      <body className="antialiased">
-        {children}
+      <body className="antialiased min-h-screen flex flex-col">
+        <Header />
+        <main className="flex-grow">
+          {children}
+        </main>
+        <Footer />
       </body>
     </html>
   );
