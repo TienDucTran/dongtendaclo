@@ -1,7 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+
+interface UserInfo {
+  id: string;
+  email: string;
+  role?: string;
+}
+
+interface Session {
+  access_token: string;
+  refresh_token: string;
+  expires_at: number;
+  user: {
+    id: string;
+    email: string;
+  };
+}
 
 const menuItems = [
   { href: '/admin', label: 'Tổng quan', icon: 'home', exact: true },
@@ -132,6 +149,57 @@ function SidebarLink({ item }: { item: { href: string; label: string; icon: stri
 }
 
 export default function Sidebar() {
+  const router = useRouter();
+  const [user, setUser] = useState<UserInfo | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    // Get user info from localStorage
+    const getUser = () => {
+      try {
+        const sessionStr = localStorage.getItem('admin_session');
+        
+        if (sessionStr) {
+          const session: Session = JSON.parse(sessionStr);
+          
+          // Check if token is expired
+          if (session.expires_at && session.expires_at * 1000 < Date.now()) {
+            // Token expired, clear session
+            localStorage.removeItem('admin_session');
+            setUser(null);
+          } else {
+            setUser({
+              id: session.user.id,
+              email: session.user.email,
+              role: 'Admin',
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error getting user:', error);
+        localStorage.removeItem('admin_session');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  const handleLogout = () => {
+    // Clear session from localStorage
+    localStorage.removeItem('admin_session');
+    setUser(null);
+    // Redirect to login
+    router.push('/admin/login');
+  };
+
+  // Get display name from email
+  const getDisplayName = (email: string) => {
+    const name = email.split('@')[0];
+    return name.charAt(0).toUpperCase() + name.slice(1);
+  };
+
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col z-50">
       {/* Logo */}
@@ -150,10 +218,35 @@ export default function Sidebar() {
       {/* User section */}
       <div className="p-4 border-t border-gray-200">
         <div className="bg-gray-50 rounded-xl p-3 mb-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-serif text-gray-700">Super Admin</span>
-            <span className="bg-[#FB923C] text-white text-xs px-2 py-0.5 rounded-full">Super Admin</span>
-          </div>
+          {isLoading ? (
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+              <div className="flex-1">
+                <div className="h-4 bg-gray-200 rounded animate-pulse mb-1"></div>
+                <div className="h-3 bg-gray-200 rounded animate-pulse w-16"></div>
+              </div>
+            </div>
+          ) : user ? (
+            <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="w-8 h-8 bg-[#801C1C] rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-white text-sm font-medium">
+                    {user.email?.charAt(0).toUpperCase() || 'A'}
+                  </span>
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-serif text-gray-700 truncate">
+                    {getDisplayName(user.email)}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="text-sm text-gray-500">
+              <p>Chưa đăng nhập</p>
+            </div>
+          )}
         </div>
         
         <Link
@@ -166,7 +259,11 @@ export default function Sidebar() {
           <span className="font-serif">Về trang công khai</span>
         </Link>
         
-        <button className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors w-full mt-1 border border-gray-300 rounded-lg hover:bg-gray-50">
+        <button 
+          onClick={handleLogout}
+          disabled={!user}
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 transition-colors w-full mt-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
           </svg>

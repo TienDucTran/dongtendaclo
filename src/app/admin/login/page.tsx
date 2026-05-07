@@ -24,7 +24,8 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      const { error: signInError } = await supabase.auth.signInWithPassword({
+      // Use Supabase client-side auth
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -35,8 +36,21 @@ export default function AdminLoginPage() {
         return;
       }
 
-      router.push(redirect);
-      router.refresh();
+      // Store session in localStorage for easy access
+      if (data.session) {
+        localStorage.setItem('admin_session', JSON.stringify({
+          access_token: data.session.access_token,
+          refresh_token: data.session.refresh_token,
+          expires_at: data.session.expires_at,
+          user: {
+            id: data.user?.id,
+            email: data.user?.email,
+          }
+        }));
+      }
+
+      // Redirect to admin dashboard
+      window.location.href = redirect;
     } catch (err) {
       setError('Có lỗi xảy ra. Vui lòng thử lại.');
       setIsLoading(false);
