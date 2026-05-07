@@ -1,16 +1,7 @@
 import Link from 'next/link';
 
-interface Program {
-  id: string;
-  title: string;
-  description: string;
-  duration: string;
-  organization: string;
-  currentCourse: string;
-  href: string;
-}
-
-const programs: Program[] = [
+// Fallback data if API is unavailable (e.g., database not set up yet)
+const fallbackPrograms = [
   {
     id: 'dong-hanh-gia-dinh',
     title: 'Huấn luyện Người Đồng Hành Gia Đình Công Giáo',
@@ -31,7 +22,44 @@ const programs: Program[] = [
   },
 ];
 
-export default function LongTermProgramsSection() {
+interface Program {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  organization: string;
+  currentCourse: string;
+  href: string;
+}
+
+export default async function LongTermProgramsSection() {
+  let programs: Program[] = fallbackPrograms;
+
+  try {
+    // Try fetching from API
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const res = await fetch(`${baseUrl}/api/programs?limit=10`, {
+      next: { revalidate: 60 }, // ISR every 60 seconds
+    });
+    if (res.ok) {
+      const data = await res.json();
+      if (data.data?.length > 0) {
+        programs = data.data.map((p: any) => ({
+          id: p.slug,
+          title: p.title,
+          description: p.description || '',
+          duration: '—',
+          organization: '—',
+          currentCourse: '—',
+          href: `/huan-luyen/${p.slug}`,
+        }));
+      }
+    }
+  } catch {
+    // Fallback to hardcoded data if API fails
+    programs = fallbackPrograms;
+  }
+
   return (
     <section className="py-16 px-4 lg:px-8 bg-white">
       <div className="max-w-[1280px] mx-auto">
@@ -72,48 +100,31 @@ export default function LongTermProgramsSection() {
               {/* Divider */}
               <div className="border-t border-slate-100 pt-6 mb-6">
                 <div className="grid grid-cols-3 gap-4">
-                  {/* Duration */}
                   <div className="flex items-start gap-3">
                     <svg className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>
-                      <p className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase mb-1">
-                        THỜI LƯỢNG
-                      </p>
-                      <p className="text-sm font-bold font-serif text-slate-900">
-                        {program.duration}
-                      </p>
+                      <p className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase mb-1">THỜI LƯỢNG</p>
+                      <p className="text-sm font-bold font-serif text-slate-900">{program.duration}</p>
                     </div>
                   </div>
-
-                  {/* Organization */}
                   <div className="flex items-start gap-3">
                     <svg className="w-5 h-5 text-slate-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     <div>
-                      <p className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase mb-1">
-                        TỔ CHỨC
-                      </p>
-                      <p className="text-sm font-bold font-serif text-slate-900">
-                        {program.organization}
-                      </p>
+                      <p className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase mb-1">TỔ CHỨC</p>
+                      <p className="text-sm font-bold font-serif text-slate-900">{program.organization}</p>
                     </div>
                   </div>
-
-                  {/* Current Course */}
                   <div className="flex items-start gap-3">
                     <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>
-                      <p className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase mb-1">
-                        KHÓA HIỆN TẠI
-                      </p>
-                      <p className="text-sm font-bold font-serif text-slate-900">
-                        {program.currentCourse}
-                      </p>
+                      <p className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase mb-1">KHÓA HIỆN TẠI</p>
+                      <p className="text-sm font-bold font-serif text-slate-900">{program.currentCourse}</p>
                     </div>
                   </div>
                 </div>
