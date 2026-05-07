@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function AboutSection() {
   return (
     <section className="py-20 bg-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Decorative Circle */}
           <div className="relative flex justify-center lg:justify-start order-2 lg:order-1">

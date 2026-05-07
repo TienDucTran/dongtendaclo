@@ -25,7 +25,7 @@ const courseTypes = [
 export default function TrainingHistorySection() {
   return (
     <section id="dao-tao" className="py-20 px-8 bg-[#F8FAFC]">
-      <div className="max-w-6xl mx-auto">
+      <div className="container">
         {/* Header */}
         <div className="text-center mb-4">
           <span className="text-[#FB923C] text-xs font-bold tracking-[0.1em] uppercase">

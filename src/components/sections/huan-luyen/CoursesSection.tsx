@@ -1,165 +1,37 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 
-// Filter data
-const formats = [
-  { id: 'in_person', label: 'Trực tiếp', count: 112 },
-  { id: 'hybrid', label: 'Kết hợp', count: 3 },
-  { id: 'online', label: 'Online', count: 1 },
+// Filter data - will be populated from API
+const defaultFormats = [
+  { id: 'in_person', label: 'Trực tiếp', count: 0 },
+  { id: 'hybrid', label: 'Kết hợp', count: 0 },
+  { id: 'online', label: 'Online', count: 0 },
 ];
 
-const categories = [
-  { id: 'linh-dao-giao-huan', label: 'Linh đạo & Giáo huấn', count: 50 },
-  { id: 'tinh-yeu-hon-nhan', label: 'Tình yêu & Hôn nhân', count: 19 },
-  { id: 'tam-ly-ky-nang-song', label: 'Tâm lý & Kỹ năng sống', count: 14 },
-  { id: 'cha-me-con-cai', label: 'Cha mẹ — Con cái', count: 13 },
-  { id: 'chua-lanh-dong-hanh', label: 'Chữa lành & Đồng hành', count: 11 },
-  { id: 'nuoi-day-con', label: 'Nuôi dạy con', count: 3 },
-  { id: 'tam-ly-linh-dao', label: 'Tâm lý — Linh đạo', count: 3 },
-  { id: 'hon-nhan-cap-doi', label: 'Hôn nhân & Cập đôi', count: 2 },
-  { id: 'lich-su-giao-ly', label: 'Lịch sử & Giáo lý', count: 1 },
-];
+const defaultCategories: { id: string; label: string; count: number }[] = [];
+const defaultAudiences: { id: string; label: string; count: number }[] = [];
 
-const audiences = [
-  { id: 'couple', label: 'Cặp đôi', count: 6 },
-  { id: 'parent', label: 'Cha mẹ', count: 6 },
-  { id: 'member', label: 'Cá nhân', count: 5 },
-  { id: 'premarital', label: 'Tiền hôn nhân', count: 1 },
-];
-
-// Sample courses data
-const allCourses = [
-  {
-    id: 'linh-thao-doi-thuong',
-    title: 'Linh thao đời thường — 19th Annotation',
-    description: 'Một hành trình 34 tuần cầu nguyện và phân định cá nhân, được đồng hành bởi một linh hướng. Hoàn toàn miễn phí.',
-    category: 'Tâm lý — Linh đạo',
-    categoryId: 'tam-ly-linh-dao',
-    format: 'Kết hợp',
-    formatId: 'hybrid',
-    date: '08/09/2026',
-    audience: ['Cá nhân', 'Cặp đôi'],
-    audienceIds: ['member', 'couple'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3 / Online',
-    status: 'Sắp khai giảng',
-    statusColor: 'bg-amber-500',
-    color: 'rgba(126, 63, 160, 0.094)',
-  },
-  {
-    id: 'khoa-tien-hon-nhan-mua-he',
-    title: 'Khóa Chuẩn bị Hôn nhân Công giáo — Mùa Hè 2026',
-    description: 'Khóa chuẩn bị hôn nhân Công giáo dành cho các đôi bạn dự định kết hôn trong vòng 6-12 tháng tới. Đầy đủ chứng nhận cho hồ sơ hôn phối.',
-    category: 'Hôn nhân & Cập đôi',
-    categoryId: 'hon-nhan-cap-doi',
-    format: 'Trực tiếp',
-    formatId: 'in_person',
-    date: '07/06/2026 • 18:30 - 21:00',
-    audience: ['Tiền hôn nhân', 'Cặp đôi'],
-    audienceIds: ['premarital', 'couple'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3',
-    status: 'Sắp khai giảng',
-    statusColor: 'bg-amber-500',
-    color: 'rgba(198, 138, 46, 0.094)',
-  },
-  {
-    id: 'viet-nam-buoi-dau-tin-mung',
-    title: 'Gia đình Việt Nam trong buổi đầu Tin Mừng đến Đất Việt',
-    description: 'Một hành trình lịch sử đầy cảm hứng — gia đình Việt Nam đã đón nhận và sống Tin Mừng như thế nào trong những thế kỷ đầu? Bài học cho mục vụ gia đình hôm nay.',
-    category: 'Lịch sử & Giáo lý',
-    categoryId: 'lich-su-giao-ly',
-    format: 'Trực tiếp',
-    formatId: 'in_person',
-    date: '31/05/2026 • 15:00 - 17:00',
-    audience: ['Cá nhân'],
-    audienceIds: ['member'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3',
-    status: 'Đang mở đăng ký',
-    statusColor: 'bg-emerald-600',
-    color: 'rgba(139, 26, 26, 0.094)',
-  },
-  {
-    id: 'gia-dinh-cong-nghe',
-    title: 'Gia đình giữa làn sóng công nghệ & trí tuệ nhân tạo',
-    description: 'Trí tuệ nhân tạo, mạng xã hội, smartphone… đang định hình lại đời sống gia đình. Chuyên đề mời gọi suy tư và đề xuất những lối sống đức tin trưởng thành giữa thời đại số.',
-    category: 'Tâm lý — Linh đạo',
-    categoryId: 'tam-ly-linh-dao',
-    format: 'Kết hợp',
-    formatId: 'hybrid',
-    date: '25/05/2026 • 15:00 - 17:30',
-    audience: ['Cặp đôi', 'Cha mẹ', 'Cá nhân'],
-    audienceIds: ['couple', 'parent', 'member'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3 / Online',
-    status: 'Đang mở đăng ký',
-    statusColor: 'bg-emerald-600',
-    color: 'rgba(126, 63, 160, 0.094)',
-  },
-  {
-    id: 'phong-chong-xam-hai-tre',
-    title: 'Vấn đề giới tính & kỹ năng phòng chống xâm hại cho trẻ',
-    description: 'Một chuyên đề khẩn thiết cho mọi gia đình. Trang bị cho cha mẹ và thầy cô giáo lý kiến thức và kỹ năng để bảo vệ con trẻ khỏi mọi hình thức xâm hại.',
-    category: 'Nuôi dạy con',
-    categoryId: 'nuoi-day-con',
-    format: 'Trực tiếp',
-    formatId: 'in_person',
-    date: '15/05/2026 • 19:00 - 21:00',
-    audience: ['Cha mẹ', 'Cá nhân'],
-    audienceIds: ['parent', 'member'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3',
-    status: 'Đang mở đăng ký',
-    statusColor: 'bg-emerald-600',
-    color: 'rgba(59, 91, 165, 0.094)',
-  },
-  {
-    id: 'nuoi-day-con-tuoi-teen',
-    title: 'Nuôi dạy con tuổi teen — Parenting',
-    description: 'Khoá học hoàn toàn online dành cho cha mẹ có con từ 12-18 tuổi. Hiểu con, đối thoại với con, và đồng hành con trong giai đoạn nhiều biến động.',
-    category: 'Nuôi dạy con',
-    categoryId: 'nuoi-day-con',
-    format: 'Online',
-    formatId: 'online',
-    date: '13/05/2026 • 20:00 - 21:30',
-    audience: ['Cha mẹ'],
-    audienceIds: ['parent'],
-    location: 'Online qua Zoom',
-    status: 'Đang mở đăng ký',
-    statusColor: 'bg-emerald-600',
-    color: 'rgba(47, 110, 84, 0.094)',
-  },
-  {
-    id: 'nghe-thuat-lang-nghe',
-    title: 'Nghệ thuật lắng nghe & đối thoại yêu thương trong gia đình',
-    description: 'Lắng nghe là khởi đầu của tình yêu. Khoá học giúp mỗi người trong gia đình tập kỹ năng lắng nghe sâu — từ cảm xúc đến nhu cầu, và đối thoại trong tinh thần tôn trọng.',
-    category: 'Hôn nhân & Cập đôi',
-    categoryId: 'hon-nhan-cap-doi',
-    format: 'Trực tiếp',
-    formatId: 'in_person',
-    date: '12/05/2026 • 19:00 - 21:00',
-    audience: ['Cặp đôi', 'Cha mẹ'],
-    audienceIds: ['couple', 'parent'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3',
-    status: 'Đang mở đăng ký',
-    statusColor: 'bg-emerald-600',
-    color: 'rgba(47, 110, 84, 0.094)',
-  },
-  {
-    id: 'chuyen-de-thai-giao',
-    title: 'Chuyên đề "Thai Giáo"',
-    description: 'Khóa chuyên đề dành cho các cặp vợ chồng đang chuẩn bị đón con và những gia đình có em bé dưới 1 tuổi. Cùng các chuyên gia tâm lý, dinh dưỡng và linh đạo, chúng ta khám phá nghệ thuật giáo dục con ngay từ những tháng đầu đời.',
-    category: 'Nuôi dạy con',
-    categoryId: 'nuoi-day-con',
-    format: 'Kết hợp',
-    formatId: 'hybrid',
-    date: '09/05/2026 • 18:30 - 20:30',
-    audience: ['Cha mẹ', 'Cặp đôi'],
-    audienceIds: ['parent', 'couple'],
-    location: 'Trung tâm Mục vụ Đắc Lộ — 171 Lý Chính Thắng, Q.3 / Online',
-    status: 'Đang mở đăng ký',
-    statusColor: 'bg-emerald-600',
-    color: 'rgba(198, 138, 46, 0.094)',
-  },
-];
+interface Course {
+  id: number;
+  slug: string;
+  title: string;
+  description: string | null;
+  category: string | null;
+  categoryId: number | null;
+  category_name: string | null;
+  format: string;
+  format_label: string | null;
+  status: string;
+  status_label: string | null;
+  start_date: string | null;
+  location: string | null;
+  audience: string[];
+  color_hex: string;
+  is_featured: boolean;
+  is_new: boolean;
+}
 
 export default function CoursesSection() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -167,13 +39,87 @@ export default function CoursesSection() {
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [selectedAudiences, setSelectedAudiences] = useState<string[]>([]);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [categories, setCategories] = useState<{ id: string; label: string; count: number }[]>(defaultCategories);
+  const [audiences, setAudiences] = useState<{ id: string; label: string; count: number }[]>(defaultAudiences);
+  const [formats, setFormats] = useState(defaultFormats);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  // Use ref to prevent duplicate fetches in React strict mode
+  const hasFetched = useRef(false);
+
+  // Fetch courses from API
+  useEffect(() => {
+    // Prevent duplicate fetches
+    if (hasFetched.current) return;
+    hasFetched.current = true;
+
+    const fetchCourses = async () => {
+      try {
+        setLoading(true);
+        const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || '';
+        const res = await fetch(`${baseUrl}/api/courses?limit=100`);
+        
+        if (!res.ok) {
+          throw new Error('Failed to fetch courses');
+        }
+        
+        const data = await res.json();
+        setCourses(data.data || []);
+
+        // Extract unique categories with counts
+        const categoryMap = new Map<string, { label: string; count: number }>();
+        const audienceMap = new Map<string, { label: string; count: number }>();
+        const formatMap = new Map<string, { label: string; count: number }>([
+          ['in_person', { label: 'Trực tiếp', count: 0 }],
+          ['hybrid', { label: 'Kết hợp', count: 0 }],
+          ['online', { label: 'Online', count: 0 }],
+        ]);
+
+        (data.data || []).forEach((course: Course) => {
+          // Count categories
+          if (course.category_name) {
+            const cat = categoryMap.get(course.category_name) || { label: course.category_name, count: 0 };
+            cat.count++;
+            categoryMap.set(course.category_name, cat);
+          }
+
+          // Count audiences
+          (course.audience || []).forEach((aud: string) => {
+            const au = audienceMap.get(aud) || { label: aud, count: 0 };
+            au.count++;
+            audienceMap.set(aud, au);
+          });
+
+          // Count formats
+          if (course.format && formatMap.has(course.format)) {
+            const fmt = formatMap.get(course.format)!;
+            fmt.count++;
+          }
+        });
+
+        setCategories(Array.from(categoryMap.values()).map(c => ({ id: c.label, ...c })));
+        setAudiences(Array.from(audienceMap.values()).map(a => ({ id: a.label, ...a })));
+        setFormats(Array.from(formatMap.values()).map(f => ({ id: f.label, ...f })));
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching courses:', err);
+        setError('Không thể tải khóa học. Vui lòng thử lại sau.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCourses();
+  }, []);
 
   const toggleFilter = (type: 'format' | 'category' | 'audience', id: string) => {
     if (type === 'format') {
       setSelectedFormats(prev =>
         prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]
       );
-      } else if (type === 'category') {
+    } else if (type === 'category') {
       setSelectedCategories(prev =>
         prev.includes(id) ? prev.filter(item => item !== id) : [...prev, id]
       );
@@ -186,20 +132,20 @@ export default function CoursesSection() {
 
   // Filter courses based on selected filters and search query
   const filteredCourses = useMemo(() => {
-    return allCourses.filter(course => {
+    return courses.filter(course => {
       // Filter by format
-      if (selectedFormats.length > 0 && !selectedFormats.includes(course.formatId)) {
+      if (selectedFormats.length > 0 && !selectedFormats.includes(course.format_label || course.format)) {
         return false;
       }
       
       // Filter by category
-      if (selectedCategories.length > 0 && !selectedCategories.includes(course.categoryId)) {
+      if (selectedCategories.length > 0 && !selectedCategories.includes(course.category_name || '')) {
         return false;
       }
       
       // Filter by audience
       if (selectedAudiences.length > 0) {
-        const hasMatchingAudience = course.audienceIds.some(aid => selectedAudiences.includes(aid));
+        const hasMatchingAudience = (course.audience || []).some(aud => selectedAudiences.includes(aud));
         if (!hasMatchingAudience) {
           return false;
         }
@@ -210,14 +156,14 @@ export default function CoursesSection() {
         const query = searchQuery.toLowerCase();
         return (
           course.title.toLowerCase().includes(query) ||
-          course.description.toLowerCase().includes(query) ||
-          course.category.toLowerCase().includes(query)
+          (course.description?.toLowerCase().includes(query)) ||
+          (course.category_name?.toLowerCase().includes(query))
         );
       }
       
       return true;
     });
-  }, [selectedFormats, selectedCategories, selectedAudiences, searchQuery]);
+  }, [courses, selectedFormats, selectedCategories, selectedAudiences, searchQuery]);
 
   // Count active filters
   const activeFilterCount = selectedFormats.length + selectedCategories.length + selectedAudiences.length;
@@ -230,9 +176,85 @@ export default function CoursesSection() {
     setSearchQuery('');
   };
 
+  // Get status badge color
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'upcoming':
+        return 'bg-amber-500';
+      case 'active':
+        return 'bg-emerald-600';
+      case 'completed':
+        return 'bg-slate-500';
+      default:
+        return 'bg-slate-500';
+    }
+  };
+
+  // Get status label
+  const getStatusLabel = (status: string, statusLabel: string | null) => {
+    if (statusLabel) return statusLabel;
+    switch (status) {
+      case 'upcoming':
+        return 'Sắp khai giảng';
+      case 'active':
+        return 'Đang mở đăng ký';
+      case 'completed':
+        return 'Đã kết thúc';
+      default:
+        return status;
+    }
+  };
+
+  // Loading state
+  if (loading) {
+    return (
+      <section className="py-16 px-4 lg:px-8 bg-white">
+        <div className="container mx-auto">
+          <div className="animate-pulse">
+            <div className="h-8 bg-slate-200 rounded w-1/4 mb-4"></div>
+            <div className="h-4 bg-slate-200 rounded w-1/2 mb-8"></div>
+            <div className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white border border-slate-100 rounded-3xl overflow-hidden">
+                  <div className="aspect-[2/1] bg-slate-200"></div>
+                  <div className="p-5">
+                    <div className="h-4 bg-slate-200 rounded w-1/3 mb-2"></div>
+                    <div className="h-6 bg-slate-200 rounded w-3/4 mb-4"></div>
+                    <div className="h-4 bg-slate-200 rounded w-full mb-2"></div>
+                    <div className="h-4 bg-slate-200 rounded w-2/3 mb-4"></div>
+                    <div className="border-t border-slate-100 pt-3">
+                      <div className="h-3 bg-slate-200 rounded w-1/2 mb-2"></div>
+                      <div className="h-3 bg-slate-200 rounded w-1/3 mb-2"></div>
+                      <div className="h-3 bg-slate-200 rounded w-2/3"></div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <section className="py-16 px-4 lg:px-8 bg-white">
+        <div className="container mx-auto text-center">
+          <svg className="w-16 h-16 mx-auto text-red-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <h3 className="text-lg font-semibold text-slate-700 mb-2">Không thể tải khóa học</h3>
+          <p className="text-slate-500">{error}</p>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 px-4 lg:px-8 bg-white">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="container mx-auto">
         <div className="grid gap-8 lg:grid-cols-[260px_1fr]">
           {/* Filter Sidebar - Desktop */}
           <aside className="hidden lg:block space-y-6">
@@ -249,79 +271,85 @@ export default function CoursesSection() {
             </div>
 
             {/* Format Filter */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
-                Hình thức
-              </h3>
-              <ul className="space-y-1.5">
-                {formats.map((format) => (
-                  <li key={format.id}>
-                    <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedFormats.includes(format.id)}
-                          onChange={() => toggleFilter('format', format.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-                        />
-                        <span>{format.label}</span>
-                      </span>
-                      <span className="text-xs text-slate-400">{format.count}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {formats.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
+                  Hình thức
+                </h3>
+                <ul className="space-y-1.5">
+                  {formats.map((format) => (
+                    <li key={format.id}>
+                      <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedFormats.includes(format.id)}
+                            onChange={() => toggleFilter('format', format.id)}
+                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                          />
+                          <span>{format.label}</span>
+                        </span>
+                        <span className="text-xs text-slate-400">{format.count}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Category Filter */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
-                Nhóm chủ đề
-              </h3>
-              <ul className="space-y-1.5">
-                {categories.map((category) => (
-                  <li key={category.id}>
-                    <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(category.id)}
-                          onChange={() => toggleFilter('category', category.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-                        />
-                        <span>{category.label}</span>
-                      </span>
-                      <span className="text-xs text-slate-400">{category.count}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {categories.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
+                  Nhóm chủ đề
+                </h3>
+                <ul className="space-y-1.5">
+                  {categories.map((category) => (
+                    <li key={category.id}>
+                      <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedCategories.includes(category.id)}
+                            onChange={() => toggleFilter('category', category.id)}
+                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                          />
+                          <span>{category.label}</span>
+                        </span>
+                        <span className="text-xs text-slate-400">{category.count}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
 
             {/* Audience Filter */}
-            <div className="space-y-2">
-              <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
-                Đối tượng
-              </h3>
-              <ul className="space-y-1.5">
-                {audiences.map((audience) => (
-                  <li key={audience.id}>
-                    <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
-                      <span className="flex items-center gap-2">
-                        <input
-                          type="checkbox"
-                          checked={selectedAudiences.includes(audience.id)}
-                          onChange={() => toggleFilter('audience', audience.id)}
-                          className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-                        />
-                        <span>{audience.label}</span>
-                      </span>
-                      <span className="text-xs text-slate-400">{audience.count}</span>
-                    </label>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {audiences.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
+                  Đối tượng
+                </h3>
+                <ul className="space-y-1.5">
+                  {audiences.map((audience) => (
+                    <li key={audience.id}>
+                      <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
+                        <span className="flex items-center gap-2">
+                          <input
+                            type="checkbox"
+                            checked={selectedAudiences.includes(audience.id)}
+                            onChange={() => toggleFilter('audience', audience.id)}
+                            className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                          />
+                          <span>{audience.label}</span>
+                        </span>
+                        <span className="text-xs text-slate-400">{audience.count}</span>
+                      </label>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </aside>
 
           {/* Main Content */}
@@ -342,13 +370,8 @@ export default function CoursesSection() {
               </div>
               <div className="flex items-center gap-3">
                 <span className="text-sm text-slate-500">
-                  <span className="font-semibold text-slate-900">{filteredCourses.length}</span> khóa chuyên đề • trang 1/12
+                  <span className="font-semibold text-slate-900">{filteredCourses.length}</span> khóa chuyên đề
                 </span>
-                <select className="px-4 py-2 text-sm border border-slate-200 rounded-full bg-white focus:outline-none focus:ring-1 focus:ring-primary">
-                  <option>Mới nhất</option>
-                  <option>Bán chạy nhất</option>
-                  <option>Sắp khai giảng</option>
-                </select>
               </div>
             </div>
 
@@ -371,82 +394,85 @@ export default function CoursesSection() {
                 </summary>
                 <div className="border-t p-4">
                   <div className="space-y-4">
-                    {/* Mobile: Format Filter */}
-                    <div className="space-y-2">
-                      <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
-                        Hình thức
-                      </h3>
-                      <ul className="space-y-1.5">
-                        {formats.map((format) => (
-                          <li key={format.id}>
-                            <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
-                              <span className="flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedFormats.includes(format.id)}
-                                  onChange={() => toggleFilter('format', format.id)}
-                                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-                                />
-                                <span>{format.label}</span>
-                              </span>
-                              <span className="text-xs text-slate-400">{format.count}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                    {/* Mobile filters */}
+                    {formats.length > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
+                          Hình thức
+                        </h3>
+                        <ul className="space-y-1.5">
+                          {formats.map((format) => (
+                            <li key={format.id}>
+                              <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
+                                <span className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedFormats.includes(format.id)}
+                                    onChange={() => toggleFilter('format', format.id)}
+                                    className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                                  />
+                                  <span>{format.label}</span>
+                                </span>
+                                <span className="text-xs text-slate-400">{format.count}</span>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {categories.length > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
+                          Nhóm chủ đề
+                        </h3>
+                        <ul className="space-y-1.5">
+                          {categories.map((category) => (
+                            <li key={category.id}>
+                              <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
+                                <span className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedCategories.includes(category.id)}
+                                    onChange={() => toggleFilter('category', category.id)}
+                                    className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                                  />
+                                  <span>{category.label}</span>
+                                </span>
+                                <span className="text-xs text-slate-400">{category.count}</span>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {audiences.length > 0 && (
+                      <div className="space-y-2">
+                        <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
+                          Đối tượng
+                        </h3>
+                        <ul className="space-y-1.5">
+                          {audiences.map((audience) => (
+                            <li key={audience.id}>
+                              <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
+                                <span className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    checked={selectedAudiences.includes(audience.id)}
+                                    onChange={() => toggleFilter('audience', audience.id)}
+                                    className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
+                                  />
+                                  <span>{audience.label}</span>
+                                </span>
+                                <span className="text-xs text-slate-400">{audience.count}</span>
+                              </label>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
 
-                    {/* Mobile: Category Filter */}
-                    <div className="space-y-2">
-                      <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
-                        Nhóm chủ đề
-                      </h3>
-                      <ul className="space-y-1.5">
-                        {categories.map((category) => (
-                          <li key={category.id}>
-                            <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
-                              <span className="flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedCategories.includes(category.id)}
-                                  onChange={() => toggleFilter('category', category.id)}
-                                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-                                />
-                                <span>{category.label}</span>
-                              </span>
-                              <span className="text-xs text-slate-400">{category.count}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Mobile: Audience Filter */}
-                    <div className="space-y-2">
-                      <h3 className="text-xs font-bold font-serif text-slate-400 tracking-[0.05em] uppercase">
-                        Đối tượng
-                      </h3>
-                      <ul className="space-y-1.5">
-                        {audiences.map((audience) => (
-                          <li key={audience.id}>
-                            <label className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-slate-50 cursor-pointer">
-                              <span className="flex items-center gap-2">
-                                <input
-                                  type="checkbox"
-                                  checked={selectedAudiences.includes(audience.id)}
-                                  onChange={() => toggleFilter('audience', audience.id)}
-                                  className="w-4 h-4 rounded border-slate-300 text-primary focus:ring-primary"
-                                />
-                                <span>{audience.label}</span>
-                              </span>
-                              <span className="text-xs text-slate-400">{audience.count}</span>
-                            </label>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    {/* Mobile: Clear filters */}
                     {activeFilterCount > 0 && (
                       <button
                         onClick={clearAllFilters}
@@ -525,10 +551,10 @@ export default function CoursesSection() {
                   className="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:border-primary/20 hover:shadow-lg transition-all group"
                 >
                   {/* Image */}
-                  <Link href={`/khoa-hoc/${course.id}`} className="block relative aspect-[2/1]">
+                  <Link href={`/khoa-hoc/${course.slug}`} className="block relative aspect-[2/1]">
                     <div
                       className="w-full h-full flex items-center justify-center"
-                      style={{ backgroundColor: course.color }}
+                      style={{ backgroundColor: course.color_hex || 'rgba(126, 63, 160, 0.094)' }}
                     >
                       <svg className="w-14 h-14 opacity-25 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 7v14m0-13c-1.168-.5-2.334-1-3.5-1c-1.666 0-3.332.477-4.5 1.253v13C5.754 18.477 7.246 18 9 18s3.332.477 4.5 1.253m0-13c1.168-.5 2.334-1 3.5-1c1.666 0 3.332.477 4.5 1.253v13c-1.168-.5-2.334-1-3.5-1c-1.166 0-3.332.477-4.5 1.253" />
@@ -536,10 +562,10 @@ export default function CoursesSection() {
                     </div>
                     <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
                       <span className="inline-flex items-center rounded-full bg-primary/95 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm backdrop-blur">
-                        {course.category}
+                        {course.category_name || 'Khóa học'}
                       </span>
-                      <span className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold shadow-sm ${course.statusColor} text-white`}>
-                        {course.status}
+                      <span className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold shadow-sm text-white ${getStatusColor(course.status)}`}>
+                        {getStatusLabel(course.status, course.status_label)}
                       </span>
                     </div>
                   </Link>
@@ -548,64 +574,60 @@ export default function CoursesSection() {
                   <div className="p-5">
                     <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
                       <span className="inline-flex items-center rounded-md border px-2 py-0.5 font-semibold bg-secondary text-secondary-foreground text-[11px]">
-                        Khóa học
+                        {course.format_label || 'Khóa học'}
                       </span>
-                      <span>{course.format}</span>
+                      <span>{course.format_label || 'Trực tiếp'}</span>
                     </div>
 
-                    <Link href={`/khoa-hoc/${course.id}`}>
+                    <Link href={`/khoa-hoc/${course.slug}`}>
                       <h3 className="mb-2 line-clamp-2 text-lg font-bold font-serif text-slate-900 group-hover:text-primary">
                         {course.title}
                       </h3>
                     </Link>
 
                     <p className="mb-4 line-clamp-3 text-sm leading-6 text-slate-500">
-                      {course.description}
+                      {course.description || 'Mô tả khóa học sẽ được cập nhật...'}
                     </p>
 
                     <div className="space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500">
-                      <p className="flex items-center gap-2">
-                        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                        </svg>
-                        <span>{course.date}</span>
-                      </p>
-                      <p className="flex items-center gap-2">
-                        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                          <circle cx="9" cy="7" r="4" />
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87a4 4 0 0 0-1-7.87+3a4 4 0 0 0-7 0A4 4 0 0 0 14 21v-2" />
-                        </svg>
-                        <span className="truncate">{course.audience.join(', ')}</span>
-                      </p>
-                      <p className="flex items-center gap-2">
-                        <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                        </svg>
-                        <span className="truncate">{course.location}</span>
-                      </p>
+                      {course.start_date && (
+                        <p className="flex items-center gap-2">
+                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                          </svg>
+                          <span>{course.start_date}</span>
+                        </p>
+                      )}
+                      {course.audience && course.audience.length > 0 && (
+                        <p className="flex items-center gap-2">
+                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87a4 4 0 0 0-1-7.87+3a4 4 0 0 0-7 0A4 4 0 0 0 14 21v-2" />
+                          </svg>
+                          <span className="truncate">{course.audience.join(', ')}</span>
+                        </p>
+                      )}
+                      {course.location && (
+                        <p className="flex items-center gap-2">
+                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <span className="truncate">{course.location}</span>
+                        </p>
+                      )}
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
                       <Link
-                        href={`/khoa-hoc/${course.id}`}
+                        href={`/khoa-hoc/${course.slug}`}
                         className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold font-serif hover:bg-primary-800 transition-colors"
                       >
                         Chi tiết & Đăng ký
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
                         </svg>
-                      </Link>
-                      <Link
-                        href={`/khoa-hoc/${course.id}#lich-khai-giang`}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 border border-slate-200 rounded-xl text-sm font-semibold font-serif hover:bg-slate-50 transition-colors"
-                      >
-                        <svg className="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6l4 2" />
-                          <circle cx="12" cy="12" r="10" />
-                        </svg>
-                        Lịch khai giảng
                       </Link>
                     </div>
                   </div>
@@ -614,7 +636,7 @@ export default function CoursesSection() {
             </div>
 
             {/* Empty State */}
-            {filteredCourses.length === 0 && (
+            {filteredCourses.length === 0 && !loading && (
               <div className="text-center py-12">
                 <svg className="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -629,46 +651,6 @@ export default function CoursesSection() {
                 </button>
               </div>
             )}
-
-            {/* Pagination */}
-            <nav className="mt-10 flex justify-center">
-              <ul className="flex items-center gap-1">
-                <li>
-                  <button className="px-3 py-2 text-sm font-medium text-slate-400 hover:bg-slate-50 rounded-md disabled:opacity-50" disabled>
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
-                    <span className="sr-only">Previous</span>
-                  </button>
-                </li>
-                <li>
-                  <button className="w-9 h-9 flex items-center justify-center text-sm font-medium bg-primary text-white rounded-md">
-                    1
-                  </button>
-                </li>
-                <li>
-                  <button className="w-9 h-9 flex items-center justify-center text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-md">
-                    2
-                  </button>
-                </li>
-                <li>
-                  <span className="w-9 h-9 flex items-center justify-center text-slate-400">...</span>
-                </li>
-                <li>
-                  <button className="w-9 h-9 flex items-center justify-center text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-md">
-                    12
-                  </button>
-                </li>
-                <li>
-                  <button className="px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 rounded-md">
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                    </svg>
-                    <span className="sr-only">Next</span>
-                  </button>
-                </li>
-              </ul>
-            </nav>
           </div>
         </div>
       </div>

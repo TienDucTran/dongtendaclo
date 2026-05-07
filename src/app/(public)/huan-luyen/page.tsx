@@ -1,6 +1,5 @@
 import HeroTrainingSection from '@/components/sections/huan-luyen/HeroTrainingSection';
 import TabsSection from '@/components/sections/huan-luyen/TabsSection';
-import LongTermProgramsSection from '@/components/sections/huan-luyen/LongTermProgramsSection';
 import UpcomingScheduleSection from '@/components/sections/huan-luyen/UpcomingScheduleSection';
 import ContactCTASection from '@/components/sections/huan-luyen/ContactCTASection';
 
@@ -14,7 +13,6 @@ export default function HuanLuyenPage() {
     <>
       <HeroTrainingSection />
       <TabsSection />
-      <LongTermProgramsSection />
       <UpcomingScheduleSection />
       <ContactCTASection />
     </>

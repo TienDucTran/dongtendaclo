@@ -6,7 +6,7 @@ export default function HeroMinistrySection() {
         <div className="h-full w-full bg-gradient-to-l from-primary/80 to-transparent" />
       </div>
       
-      <div className="max-w-[1280px] mx-auto px-4 lg:px-8">
+      <div className="container mx-auto px-4 lg:px-8">
         <div className="max-w-[768px]">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 mb-6">

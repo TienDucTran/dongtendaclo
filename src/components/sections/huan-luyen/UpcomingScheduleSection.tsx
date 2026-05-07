@@ -1,7 +1,7 @@
 export default function UpcomingScheduleSection() {
   return (
     <section className="py-16 px-4 lg:px-8 bg-slate-50">
-      <div className="max-w-[1280px] mx-auto">
+      <div className="container mx-auto">
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold font-serif text-slate-900 mb-4">
