@@ -1,5 +1,6 @@
 import Link from 'next/link';
-
+import Image from 'next/image';
+import logoCefam from '@/assets/logo-cefam.png';
 const footerLinks = {
   explore: [
     { name: 'Về chúng tôi', href: '/gioi-thieu' },
@@ -31,12 +32,13 @@ export default function Footer() {
           <div className="lg:col-span-1">
             {/* Logo */}
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-2xl bg-white/10 p-3 flex items-center justify-center">
-                <div className="w-full h-full rounded-full border-2 border-white flex items-center justify-center">
-                  {/* Logo Image - TODO: Replace with actual logo image */}
-                  <span className="text-white font-serif font-bold text-sm">MV</span>
-                </div>
-              </div>
+              <Image
+              src={logoCefam}
+              alt="Logo CEFAM - Trung Tâm Mục Vụ Gia Đình Đắc Lộ"
+              width={48}
+              height={48}
+              className="w-12 h-12 object-contain"
+            />
               <div className="flex flex-col">
                 <span className="text-base font-bold text-white font-serif leading-tight">
                   Mục Vụ Gia Đình

@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import logoCefam from '@/assets/logo-cefam.png';
 
 const navigation = [
   { name: 'Trang chủ', href: '/' },
@@ -24,10 +26,13 @@ export default function Header() {
         <div className="flex justify-between items-center h-[72px]">
           {/* Logo and Brand */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full border-2 border-white flex items-center justify-center overflow-hidden bg-primary">
-              {/* Logo Image - TODO: Replace with actual logo image */}
-              <span className="text-white font-serif font-bold text-lg">MV</span>
-            </div>
+            <Image
+              src={logoCefam}
+              alt="Logo CEFAM - Trung Tâm Mục Vụ Gia Đình Đắc Lộ"
+              width={48}
+              height={48}
+              className="w-12 h-12 object-contain"
+            />
             <div className="flex flex-col">
               <span className="text-sm font-bold text-primary tracking-wide font-serif leading-tight">
                 MỤC VỤ GIA ĐÌNH ĐẮC LỘ

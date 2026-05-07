@@ -4,10 +4,30 @@ export interface TrainingProgram {
   title: string;
   slug: string;
   description: string | null;
+  duration: string | null;
+  schedule: string | null;
+  current_cohort: string | null;
+  icon: string | null;
+  pdf_link: string | null;
+  color_hex: string | null;
   order: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface TrainingProgramInput {
+  title: string;
+  slug: string;
+  description?: string;
+  duration?: string;
+  schedule?: string;
+  current_cohort?: string;
+  icon?: string;
+  pdf_link?: string;
+  color_hex?: string;
+  order?: number;
+  is_active?: boolean;
 }
 
 export interface Category {
@@ -64,14 +84,6 @@ export interface CourseInput {
   location?: string;
   audience?: string[];
   color_hex?: string;
-}
-
-export interface TrainingProgramInput {
-  title: string;
-  slug: string;
-  description?: string;
-  order?: number;
-  is_active?: boolean;
 }
 
 export interface PaginatedResponse<T> {

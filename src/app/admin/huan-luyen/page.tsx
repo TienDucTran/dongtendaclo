@@ -1,57 +1,51 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-
-interface Program {
-  id: number;
-  title: string;
-  slug: string;
-  description: string | null;
-  order: number;
-  is_active: boolean;
-  created_at: string;
-  updated_at: string;
-}
+import ProgramFormModal, { ProgramFormData } from '@/components/admin/ProgramFormModal';
+import { TrainingProgram } from '@/lib/db/index';
 
 type ViewMode = 'card' | 'table';
 type SortOption = 'order' | 'name-asc' | 'name-desc' | 'date-desc' | 'date-asc';
 
 export default function HuanLuyenPage() {
-  const [programs, setPrograms] = useState<Program[]>([]);
+  const [programs, setPrograms] = useState<TrainingProgram[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState<SortOption>('order');
   const [viewMode, setViewMode] = useState<ViewMode>('card');
   const [setupStatus, setSetupStatus] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingProgram, setEditingProgram] = useState<TrainingProgram | null>(null);
 
   // Fetch programs from API
   useEffect(() => {
-    const fetchPrograms = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch('/api/admin/programs?limit=100');
-        const data = await res.json();
-        
-        // Check if DB needs setup (API returns _setup: true when tables don't exist)
-        if (data._setup === true) {
-          setSetupStatus('DATABASE_NEEDS_SETUP');
-          setError(null);
-          return;
-        }
-        
-        if (!res.ok) {
-          throw new Error(data.error || 'Failed to fetch');
-        }
-        setPrograms(data.data || []);
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchPrograms();
   }, []);
+
+  const fetchPrograms = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch('/api/admin/programs?limit=100');
+      const data = await res.json();
+      
+      // Check if DB needs setup
+      if (data._setup === true) {
+        setSetupStatus('DATABASE_NEEDS_SETUP');
+        setError(null);
+        return;
+      }
+      
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to fetch');
+      }
+      setPrograms(data.data || []);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Filter and sort programs
   const filteredPrograms = useMemo(() => {
@@ -83,6 +77,72 @@ export default function HuanLuyenPage() {
 
     return result;
   }, [programs, searchQuery, sortOption]);
+
+  // Handle create/update program
+  const handleSubmit = async (formData: ProgramFormData) => {
+    try {
+      const url = editingProgram 
+        ? `/api/admin/programs?id=${editingProgram.id}`
+        : '/api/admin/programs';
+      
+      const method = editingProgram ? 'PUT' : 'POST';
+      
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || 'Failed to save');
+      }
+
+      // Refresh the list
+      await fetchPrograms();
+    } catch (error: any) {
+      throw error;
+    }
+  };
+
+  // Handle delete program
+  const handleDelete = async (id: number) => {
+    if (!confirm('Bạn có chắc muốn xóa chương trình này?')) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/admin/programs?id=${id}`, { method: 'DELETE' });
+      
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to delete');
+      }
+
+      setPrograms(prev => prev.filter(p => p.id !== id));
+    } catch (error: any) {
+      alert(error.message);
+    }
+  };
+
+  // Open modal for creating
+  const openCreateModal = () => {
+    setEditingProgram(null);
+    setIsModalOpen(true);
+  };
+
+  // Open modal for editing
+  const openEditModal = (program: TrainingProgram) => {
+    setEditingProgram(program);
+    setIsModalOpen(true);
+  };
+
+  // Close modal
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setEditingProgram(null);
+  };
 
   if (setupStatus === 'DATABASE_NEEDS_SETUP') {
     return (
@@ -179,7 +239,10 @@ export default function HuanLuyenPage() {
                 <span className="text-sm font-serif">Thẻ</span>
               </button>
             </div>
-            <button className="flex items-center gap-2 px-6 py-2.5 bg-[#801818] text-white rounded-lg hover:bg-[#6B1515] transition-colors shadow-sm">
+            <button 
+              onClick={openCreateModal}
+              className="flex items-center gap-2 px-6 py-2.5 bg-[#801818] text-white rounded-lg hover:bg-[#6B1515] transition-colors shadow-sm"
+            >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
               <span className="text-sm font-serif font-medium">Thêm chương trình</span>
             </button>
@@ -205,11 +268,19 @@ export default function HuanLuyenPage() {
                 <p className="text-sm font-serif text-gray-400 mb-3">/{program.slug}</p>
                 <p className="text-sm font-serif text-gray-600 leading-relaxed mb-6">{program.description}</p>
                 <div className="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
-                  <button className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-500 hover:text-[#801818] hover:bg-gray-50 rounded-lg transition-colors" title="Chỉnh sửa">
+                  <button 
+                    onClick={() => openEditModal(program)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-500 hover:text-[#801818] hover:bg-gray-50 rounded-lg transition-colors" 
+                    title="Chỉnh sửa"
+                  >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                     Sửa
                   </button>
-                  <button className="flex items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors" title="Xóa">
+                  <button 
+                    onClick={() => handleDelete(program.id)}
+                    className="flex items-center gap-2 px-3 py-1.5 text-sm text-red-500 hover:bg-red-50 rounded-lg transition-colors" 
+                    title="Xóa"
+                  >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                     Xóa
                   </button>
@@ -236,10 +307,18 @@ export default function HuanLuyenPage() {
                     <td className="px-6 py-4"><span className="text-sm font-serif text-gray-600 line-clamp-2">{program.description}</span></td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" title="Chỉnh sửa">
+                        <button 
+                          onClick={() => openEditModal(program)}
+                          className="p-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded-lg transition-colors" 
+                          title="Chỉnh sửa"
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                         </button>
-                        <button className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Xóa">
+                        <button 
+                          onClick={() => handleDelete(program.id)}
+                          className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" 
+                          title="Xóa"
+                        >
                           <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
                         </button>
                       </div>
@@ -279,6 +358,14 @@ export default function HuanLuyenPage() {
           </div>
         </div>
       </div>
+
+      {/* Modal */}
+      <ProgramFormModal
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+        initialData={editingProgram}
+      />
     </div>
   );
 }
