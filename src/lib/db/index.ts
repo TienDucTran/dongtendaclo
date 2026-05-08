@@ -3,6 +3,7 @@ export interface TrainingProgram {
   id: number;
   title: string;
   slug: string;
+  summary: string | null;
   description: string | null;
   duration: string | null;
   schedule: string | null;
@@ -19,6 +20,7 @@ export interface TrainingProgram {
 export interface TrainingProgramInput {
   title: string;
   slug: string;
+  summary?: string;
   description?: string;
   duration?: string;
   schedule?: string;

@@ -14,6 +14,7 @@ interface ProgramFormModalProps {
 export interface ProgramFormData {
   title: string;
   slug: string;
+  summary: string;
   description: string;
   duration: string;
   schedule: string;
@@ -28,6 +29,7 @@ export interface ProgramFormData {
 const defaultFormData: ProgramFormData = {
   title: '',
   slug: '',
+  summary: '',
   description: '',
   duration: '',
   schedule: '',
@@ -64,6 +66,7 @@ export default function ProgramFormModal({ isOpen, onClose, onSubmit, initialDat
       setFormData({
         title: initialData.title || '',
         slug: initialData.slug || '',
+        summary: initialData.summary || '',
         description: initialData.description || '',
         duration: initialData.duration || '',
         schedule: initialData.schedule || '',
@@ -206,10 +209,10 @@ export default function ProgramFormModal({ isOpen, onClose, onSubmit, initialDat
               </label>
               <input
                 type="text"
-                value={formData.description.split('</p>')[0]?.replace(/<[^>]*>/g, '').substring(0, 200) || ''}
-                onChange={(e) => setFormData(prev => ({ ...prev, description: `<p>${e.target.value}</p>` }))}
+                value={formData.summary}
+                onChange={(e) => setFormData(prev => ({ ...prev, summary: e.target.value }))}
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                placeholder="Mô tả ngắn gọn..."
+                placeholder="Mô tả ngắn gọn về chương trình..."
               />
             </div>
 

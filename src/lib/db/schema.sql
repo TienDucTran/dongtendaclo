@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS training_programs (
   id SERIAL PRIMARY KEY,
   title TEXT NOT NULL,
   slug TEXT NOT NULL UNIQUE,
+  summary TEXT,
   description TEXT,
   duration TEXT,
   schedule TEXT,
@@ -18,6 +19,47 @@ CREATE TABLE IF NOT EXISTS training_programs (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- Add missing columns if they don't exist (for existing tables)
+DO $$
+BEGIN
+  -- Summary column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'summary') THEN
+    ALTER TABLE training_programs ADD COLUMN summary TEXT;
+  END IF;
+  -- Duration column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'duration') THEN
+    ALTER TABLE training_programs ADD COLUMN duration TEXT;
+  END IF;
+  -- Schedule column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'schedule') THEN
+    ALTER TABLE training_programs ADD COLUMN schedule TEXT;
+  END IF;
+  -- Current cohort column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'current_cohort') THEN
+    ALTER TABLE training_programs ADD COLUMN current_cohort TEXT;
+  END IF;
+  -- Icon column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'icon') THEN
+    ALTER TABLE training_programs ADD COLUMN icon TEXT DEFAULT 'GraduationCap';
+  END IF;
+  -- PDF link column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'pdf_link') THEN
+    ALTER TABLE training_programs ADD COLUMN pdf_link TEXT;
+  END IF;
+  -- Color hex column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'color_hex') THEN
+    ALTER TABLE training_programs ADD COLUMN color_hex TEXT DEFAULT '#8A1A1A';
+  END IF;
+  -- Order column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'order') THEN
+    ALTER TABLE training_programs ADD COLUMN "order" INTEGER DEFAULT 0;
+  END IF;
+  -- Is active column
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name = 'training_programs' AND column_name = 'is_active') THEN
+    ALTER TABLE training_programs ADD COLUMN is_active BOOLEAN DEFAULT TRUE;
+  END IF;
+END $$;
 
 -- Create index for faster slug lookup
 CREATE INDEX IF NOT EXISTS idx_training_programs_slug ON training_programs(slug);
