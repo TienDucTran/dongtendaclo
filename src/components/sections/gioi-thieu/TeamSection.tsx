@@ -21,7 +21,7 @@ const teams = [
 export default function TeamSection() {
   return (
     <section id="doi-ngu" className="py-20 px-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="container">
         {/* Header */}
         <div className="text-center mb-4">
           <span className="text-[#FB923C] text-xs font-bold tracking-[0.1em] uppercase">

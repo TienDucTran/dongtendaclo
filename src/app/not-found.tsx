@@ -1,23 +1,40 @@
 import Link from 'next/link';
+import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
+import LucideIcon from '@/components/ui/LucideIcon';
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-      <div className="text-center p-8">
-        <h1 className="text-6xl font-bold text-[#8B1D1D] mb-4">404</h1>
-        <h2 className="text-2xl font-bold text-[#0F172A] mb-4">
-          Trang không tồn tại
-        </h2>
-        <p className="text-[#475569] mb-6">
-          Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.
-        </p>
-        <Link
-          href="/"
-          className="bg-[#8B1D1D] text-white px-6 py-3 rounded-full font-medium hover:bg-[#7A1717] transition-colors"
-        >
-          Về trang chủ
-        </Link>
-      </div>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1 flex items-center justify-center bg-background py-24 px-4">
+        <div className="text-center max-w-xl">
+          <p className="text-7xl md:text-8xl font-serif font-bold text-primary mb-4">404</p>
+          <h1 className="text-2xl md:text-3xl font-serif font-bold mb-4">
+            Không tìm thấy trang
+          </h1>
+          <p className="text-muted-foreground mb-8 leading-relaxed">
+            Rất tiếc, trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển. Mời bạn quay lại trang chủ hoặc khám phá các nội dung khác của Trung Tâm Mục Vụ Gia Đình Đắc Lộ.
+          </p>
+          <div className="flex flex-wrap gap-3 justify-center">
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground border border-primary-border min-h-10 rounded-md px-8 hover:opacity-90"
+            >
+              <LucideIcon name="House" className="w-4 h-4 mr-2" />
+              Về trang chủ
+            </Link>
+            <Link
+              href="/tai-nguyen"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input shadow-xs min-h-10 rounded-md px-8 hover:bg-accent hover:text-accent-foreground"
+            >
+              <LucideIcon name="ArrowLeft" className="w-4 h-4 mr-2" />
+              Khám phá tài nguyên
+            </Link>
+          </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   );
 }

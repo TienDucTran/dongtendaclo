@@ -33,7 +33,7 @@ Tạo file `.env.local` (hoặc sử dụng `.env`):
 ```env
 # Supabase
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_ANON_KEY=your_supabase_anon_key
 
 # Figma
 FIGMA_ACCESS_TOKEN=your_figma_personal_access_token

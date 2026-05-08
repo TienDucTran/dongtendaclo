@@ -11,7 +11,7 @@ export default function HeroAboutSection() {
         </svg>
       </div>
       
-      <div className="relative max-w-5xl mx-auto flex flex-col gap-6">
+      <div className="relative container flex flex-col gap-6">
         {/* Badge */}
         <div className="inline-flex">
           <div className="bg-white/20 rounded px-3 py-1">

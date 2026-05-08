@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function ContactCTA() {
   return (
     <section className="py-12 bg-white border-t border-gray-100">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container">
         <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
           <div className="lg:max-w-lg">
             <h3 className="text-2xl font-bold text-gray-900 mb-2">

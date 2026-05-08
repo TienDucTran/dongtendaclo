@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
+import logoCefam from '@/assets/logo-cefam.png';
 
 const navigation = [
   { name: 'Trang chủ', href: '/' },
@@ -15,49 +18,65 @@ const navigation = [
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const pathname = usePathname();
 
   return (
-    <header className="bg-white shadow-card sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-[72px]">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-200/60 shadow-header">
+      <div className="container">
+        <div className="flex justify-between items-center h-[80px]">
           {/* Logo and Brand */}
           <Link href="/" className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full border-2 border-primary flex items-center justify-center bg-primary/10">
-              <span className="text-primary font-serif font-bold text-lg">MV</span>
-            </div>
+            <Image
+              src={logoCefam}
+              alt="Logo CEFAM - Trung Tâm Mục Vụ Gia Đình Đắc Lộ"
+              width={48}
+              height={48}
+              className="w-12 h-12 object-contain"
+            />
             <div className="flex flex-col">
-              <span className="text-sm font-bold text-primary tracking-wide">
+              <span className="text-lg font-bold text-primary tracking-wide font-serif leading-tight">
                 MỤC VỤ GIA ĐÌNH ĐẮC LỘ
               </span>
-              <span className="text-xs text-gray-500 tracking-wider uppercase">
-                Dòng Tên Việt Nam
+              <span className="text-[12px] text-slate-600 tracking-[0.1em] uppercase font-sans">
+                DÒNG TÊN VIỆT NAM
               </span>
             </div>
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center gap-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-sm font-medium text-gray-700 hover:text-primary transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
+          <nav className="hidden lg:flex items-center gap-1">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href || 
+                (item.href !== '/' && pathname.startsWith(item.href));
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`px-4 py-2 text-sm font-sans transition-colors ${
+                    isActive
+                      ? 'text-primary font-semibold border-b-2 border-primary'
+                      : 'text-slate-600 font-medium hover:text-primary'
+                  }`}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
+          <div className="hidden lg:flex items-center gap-4">
             <Link
-              href="/dang-ky"
-              className="bg-primary text-white px-6 py-2.5 rounded-md text-sm font-semibold hover:bg-primary-800 transition-colors"
+              href="/lien-he"
+              className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-white border border-primary min-h-9 py-2 rounded-full px-6 hover:bg-primary-800"
             >
               Đăng ký ngay
             </Link>
+          </div>
           </nav>
+
 
           {/* Mobile menu button */}
           <button
             type="button"
-            className="lg:hidden p-2 text-gray-700"
+            className="lg:hidden p-2 text-slate-700"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -73,21 +92,29 @@ export default function Header() {
 
       {/* Mobile menu */}
       {mobileMenuOpen && (
-        <div className="lg:hidden bg-white border-t">
-          <div className="px-4 py-4 space-y-2">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="block py-2 text-sm font-medium text-gray-700 hover:text-primary"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
+        <div className="lg:hidden bg-white border-t border-slate-200">
+          <div className="px-4 py-4 space-y-1">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href || 
+                (item.href !== '/' && pathname.startsWith(item.href));
+              return (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={`block py-3 px-4 text-sm font-serif rounded-lg transition-colors ${
+                    isActive
+                      ? 'text-primary font-semibold bg-primary/5'
+                      : 'text-slate-600 font-medium hover:text-primary hover:bg-slate-50'
+                  }`}
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              );
+            })}
             <Link
               href="/dang-ky"
-              className="block w-full text-center bg-primary text-white px-6 py-2.5 rounded-md text-sm font-semibold mt-4"
+              className="block w-full text-center bg-primary text-white px-6 py-3 rounded-lg text-sm font-semibold font-serif mt-4"
               onClick={() => setMobileMenuOpen(false)}
             >
               Đăng ký ngay

@@ -1,5 +1,3 @@
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
 import HeroAboutSection from '@/components/sections/gioi-thieu/HeroAboutSection';
 import SecondaryNav from '@/components/sections/gioi-thieu/SecondaryNav';
 import MissionVisionSection from '@/components/sections/gioi-thieu/MissionVisionSection';
@@ -12,8 +10,7 @@ import CallToActionSection from '@/components/sections/gioi-thieu/CallToActionSe
 
 export default function GioiThieuPage() {
   return (
-    <main className="min-h-screen">
-      <Header />
+    <>
       <HeroAboutSection />
       <SecondaryNav />
       <MissionVisionSection />
@@ -23,7 +20,6 @@ export default function GioiThieuPage() {
       <TeamSection />
       <CoreValuesSection />
       <CallToActionSection />
-      <Footer />
-    </main>
+    </>
   );
 }

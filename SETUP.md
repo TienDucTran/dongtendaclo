@@ -13,7 +13,7 @@ Mở file `.env` và thêm Supabase credentials:
 ```env
 # Supabase (cần thêm)
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_ANON_KEY=your-anon-key
 
 # Figma (đã có)
 FIGMA_ACCESS_TOKEN=figd_97fwgfMSNWQKi_Anqe2xdpBm7L0lphFaS502xhlc
@@ -149,7 +149,7 @@ File `.env` cần có:
 | `FIGMA_ACCESS_TOKEN` | Figma Personal Access Token | ✅ |
 | `FIGMA_FILE_KEY` | Figma File Key từ URL | ✅ |
 | `NEXT_PUBLIC_SUPABASE_URL` | Supabase Project URL | ✅ |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase Anon Key | ✅ |
+| `SUPABASE_ANON_KEY` | Supabase Anon Key | ✅ |
 
 ## 📞 Hỗ trợ
 
