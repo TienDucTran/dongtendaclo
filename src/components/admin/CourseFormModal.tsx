@@ -578,7 +578,7 @@ export default function CourseFormModal({
             {/* Is New */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium">
-                Đánh dấu "Mới"
+                Đánh dấu &ldquo;Mới&rdquo;
               </label>
               <button
                 type="button"
