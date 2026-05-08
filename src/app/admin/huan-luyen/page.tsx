@@ -83,7 +83,7 @@ export default function HuanLuyenPage() {
   const handleSubmit = async (formData: ProgramFormData) => {
     try {
       const url = editingProgram 
-        ? `/api/admin/programs?id=${editingProgram.id}`
+        ? `/api/admin/programs/${editingProgram.id}`
         : '/api/admin/programs';
       
       const method = editingProgram ? 'PUT' : 'POST';
@@ -114,7 +114,7 @@ export default function HuanLuyenPage() {
     }
 
     try {
-      const res = await fetch(`/api/admin/programs?id=${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/admin/programs/${id}`, { method: 'DELETE' });
       
       if (!res.ok) {
         const data = await res.json();

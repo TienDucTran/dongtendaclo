@@ -33,7 +33,30 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const course = await createCourse(body);
+    
+    // Map form data to database schema - only include fields that exist in the courses table
+    const courseInput = {
+      title: body.title,
+      slug: body.slug,
+      description: body.description || body.short_description || null,
+      program_id: body.program_id || null,
+      category_id: body.category_id || null,
+      course_type: body.course_type || 'course',
+      format: body.format || 'in_person',
+      status: body.status || 'active',
+      status_label: body.status === 'active' ? 'Đang mở' : body.status === 'upcoming' ? 'Sắp khai giảng' : 'Đã qua',
+      format_label: body.format === 'in_person' ? 'Trực tiếp' : body.format === 'online' ? 'Online' : 'Kết hợp',
+      start_date: body.start_date || null,
+      students_count: body.students_count || 0,
+      order: body.order || 0,
+      is_featured: body.is_featured ?? false,
+      is_new: body.is_new ?? false,
+      location: body.location || null,
+      audience: body.target_audience ? body.target_audience.split(',').map((s: string) => s.trim()).filter(Boolean) : [],
+      color_hex: body.color_hex || '#8A1A1A',
+    };
+    
+    const course = await createCourse(courseInput);
     return NextResponse.json({ data: course }, { status: 201 });
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
