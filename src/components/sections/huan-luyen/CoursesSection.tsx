@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Pagination from '@/components/ui/Pagination';
+import CourseCard from '@/components/ui/CourseCard';
 
 const ITEMS_PER_PAGE = 9;
 
@@ -571,92 +572,7 @@ export default function CoursesSection() {
             {/* Course Grid */}
             <div className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
               {paginatedCourses.map((course) => (
-                <article
-                  key={course.id}
-                  className="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:border-primary/20 hover:shadow-lg transition-all group"
-                >
-                  {/* Image */}
-                  <Link href={`/khoa-hoc/${course.slug}`} className="block relative aspect-[2/1]">
-                    <div
-                      className="w-full h-full flex items-center justify-center"
-                      style={{ backgroundColor: course.color_hex || 'rgba(126, 63, 160, 0.094)' }}
-                    >
-                      <svg className="w-14 h-14 opacity-25 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 7v14m0-13c-1.168-.5-2.334-1-3.5-1c-1.666 0-3.332.477-4.5 1.253v13C5.754 18.477 7.246 18 9 18s3.332.477 4.5 1.253m0-13c1.168-.5 2.334-1 3.5-1c1.666 0 3.332.477 4.5 1.253v13c-1.168-.5-2.334-1-3.5-1c-1.166 0-3.332.477-4.5 1.253" />
-                      </svg>
-                    </div>
-                    <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
-                      <span className="inline-flex items-center rounded-full bg-primary/95 px-2.5 py-1 text-[11px] font-semibold text-white shadow-sm backdrop-blur">
-                        {course.category_name || 'Khóa học'}
-                      </span>
-                      <span className={`inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-semibold shadow-sm text-white ${getStatusColor(course.status)}`}>
-                        {getStatusLabel(course.status, course.status_label)}
-                      </span>
-                    </div>
-                  </Link>
-
-                  {/* Content */}
-                  <div className="p-5">
-                    <div className="mb-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                      <span className="inline-flex items-center rounded-md border px-2 py-0.5 font-semibold bg-secondary text-secondary-foreground text-[11px]">
-                        {course.format_label || 'Khóa học'}
-                      </span>
-                      <span>{course.format_label || 'Trực tiếp'}</span>
-                    </div>
-
-                    <Link href={`/khoa-hoc/${course.slug}`}>
-                      <h3 className="mb-2 line-clamp-2 text-lg font-bold font-serif text-slate-900 group-hover:text-primary">
-                        {course.title}
-                      </h3>
-                    </Link>
-
-                    <p className="mb-4 line-clamp-3 text-sm leading-6 text-slate-500">
-                      {course.description || 'Mô tả khóa học sẽ được cập nhật...'}
-                    </p>
-
-                    <div className="space-y-1.5 border-t border-slate-100 pt-3 text-xs text-slate-500">
-                      {course.start_date && (
-                        <p className="flex items-center gap-2">
-                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                          </svg>
-                          <span>{course.start_date}</span>
-                        </p>
-                      )}
-                      {course.audience && course.audience.length > 0 && (
-                        <p className="flex items-center gap-2">
-                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                            <circle cx="9" cy="7" r="4" />
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87a4 4 0 0 0-1-7.87+3a4 4 0 0 0-7 0A4 4 0 0 0 14 21v-2" />
-                          </svg>
-                          <span className="truncate">{course.audience.join(', ')}</span>
-                        </p>
-                      )}
-                      {course.location && (
-                        <p className="flex items-center gap-2">
-                          <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <span className="truncate">{course.location}</span>
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="mt-4 flex flex-wrap gap-2">
-                      <Link
-                        href={`/khoa-hoc/${course.slug}`}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 bg-primary text-white rounded-xl text-sm font-semibold font-serif hover:bg-primary-800 transition-colors"
-                      >
-                        Chi tiết & Đăng ký
-                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h14m-7-7l7 7-7 7" />
-                        </svg>
-                      </Link>
-                    </div>
-                  </div>
-                </article>
+                <CourseCard key={course.id} course={course} />
               ))}
             </div>
 

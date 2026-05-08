@@ -7,7 +7,7 @@ const programs = [
     description: 'Không gian lắng nghe và đồng hành dành cho cá nhân, cặp đôi và gia đình đang đối diện với những khó khăn trong đời sống tâm lý, tương quan, hôn nhân, gia đình hoặc đức tin.',
     tags: ['Cá nhân', 'Cặp đôi', 'Gia đình', 'Linh hướng'],
     cta: 'Tìm hiểu thêm / Đặt lịch hẹn',
-    href: '/tu-van',
+    href: 'tu-van',
     color: 'rgb(138, 26, 26)', // Primary red
   },
   {
@@ -16,7 +16,7 @@ const programs = [
     description: 'Một cộng đoàn nâng đỡ các gia đình trẻ qua các buổi gặp gỡ, chia sẻ, cầu nguyện, học hỏi và sinh hoạt chung, giúp các gia đình lớn lên trong tình yêu, đức tin và sự hiệp thông.',
     tags: ['Gia đình trẻ', 'Cộng đoàn', 'Sinh hoạt'],
     cta: 'Tìm hiểu thêm',
-    href: '/dong-hanh',
+    href: 'dong-hanh',
     color: 'rgb(160, 82, 45)', // Brown
   },
   {
@@ -25,7 +25,7 @@ const programs = [
     description: 'Các khóa tĩnh tâm cuối tuần dành cho đôi bạn, vợ chồng và gia đình, giúp dừng lại, lắng nghe nhau và gặp gỡ Thiên Chúa trong chính thực tại đời thường.',
     tags: ['Tĩnh tâm', 'Cuối tuần', 'Vợ chồng'],
     cta: 'Xem khóa tĩnh tâm đang mở',
-    href: '/tinh-tam',
+    href: 'tinh-tam',
     color: 'rgb(22, 101, 52)', // Green
   },
   {
@@ -34,7 +34,7 @@ const programs = [
     description: 'Các khóa linh thao dành cho gia đình theo linh đạo I-nhã, thường kéo dài 5-8 ngày, giúp người tham dự đi vào hành trình cầu nguyện, phân định và canh tân đời sống gia đình.',
     tags: ['Linh thao', 'I-nhã', '5-8 ngày'],
     cta: 'Xem lịch linh thao / Đăng ký',
-    href: '/linh-thao',
+    href: 'linh-thao',
     color: 'rgb(30, 58, 138)', // Blue
   },
 ];
@@ -103,7 +103,7 @@ export default function MainProgramsSection() {
 
                   {/* Title with Link */}
                   <h3 className="mb-2 text-xl font-bold leading-snug md:text-2xl">
-                    <Link href={program.href} className="hover:underline">
+                    <Link href={`/muc-vu/${program.href}`} className="hover:underline">
                       {program.title}
                     </Link>
                   </h3>
@@ -129,7 +129,7 @@ export default function MainProgramsSection() {
                   <div className="border-t border-border/60 pt-5">
                     {/* CTA Button */}
                     <Link
-                      href={program.href}
+                      href={`/muc-vu/${program.href}`}
                       className="inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 hover-elevate active-elevate-2 bg-primary text-primary-foreground border border-primary-border min-h-9 px-4 py-2 rounded-full"
                     >
                       {program.cta}

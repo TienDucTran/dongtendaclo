@@ -199,6 +199,26 @@ export async function getCourseById(id: number): Promise<Course | null> {
   } as Course;
 }
 
+export async function getCourseBySlug(slug: string): Promise<Course | null> {
+  const { data, error } = await supabase
+    .from('courses')
+    .select(`
+      *,
+      training_programs!courses_program_id_fkey (title),
+      categories (name)
+    `)
+    .eq('slug', slug)
+    .single();
+
+  if (error) return null;
+  const item = data as any;
+  return {
+    ...item,
+    program_name: item.training_programs?.title || null,
+    category_name: item.categories?.name || null,
+  } as Course;
+}
+
 export async function createCourse(input: CourseInput): Promise<Course> {
   const { data, error } = await supabase
     .from('courses')
