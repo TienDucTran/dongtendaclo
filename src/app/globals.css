@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Serif:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Lora:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -27,26 +27,30 @@ html {
 }
 
 body {
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   color: var(--slate-900);
   background-color: #FFFFFF;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography - Noto Serif is primary font from Figma */
+/* Typography - Lora is serif font */
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Lora', serif;
   font-weight: 700;
 }
 
 .font-serif {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Lora', serif;
+}
+
+.font-sans {
+  font-family: 'Be Vietnam Pro', sans-serif;
 }
 
 /* Heading styles from Figma */
 .heading-1 {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Lora', serif;
   font-size: 48px;
   line-height: 1.25;
   font-weight: 700;
@@ -54,21 +58,21 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .heading-2 {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Lora', serif;
   font-size: 36px;
   line-height: 1.11;
   font-weight: 700;
 }
 
 .heading-3 {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Lora', serif;
   font-size: 24px;
   line-height: 1.33;
   font-weight: 700;
 }
 
 .heading-4 {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Lora', serif;
   font-size: 18px;
   line-height: 1.55;
   font-weight: 700;
@@ -76,26 +80,26 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Body styles from Figma */
 .body-lg {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 20px;
   line-height: 1.4;
 }
 
 .body {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 16px;
   line-height: 1.5;
 }
 
 .body-sm {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 14px;
   line-height: 1.62;
 }
 
 /* Badge/Label styles from Figma */
 .badge {
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-size: 12px;
   line-height: 1.33;
   font-weight: 700;
@@ -211,7 +215,7 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
   padding: 12px 24px;
   border-radius: 12px;
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-weight: 600;
   font-size: 16px;
   transition: background-color 0.2s ease;
@@ -227,7 +231,7 @@ h1, h2, h3, h4, h5, h6 {
   border: 1px solid var(--primary);
   padding: 12px 24px;
   border-radius: 12px;
-  font-family: 'Noto Serif', Georgia, serif;
+  font-family: 'Be Vietnam Pro', sans-serif;
   font-weight: 600;
   font-size: 16px;
   transition: background-color 0.2s ease;

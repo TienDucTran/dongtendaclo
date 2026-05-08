@@ -49,6 +49,20 @@ const config: Config = {
           800: '#9A3412',
           900: '#7C2D12',
         },
+        // Gold color - Used for highlights and accents
+        gold: {
+          DEFAULT: '#D9A520',
+          50: '#FFFDF0',
+          100: '#FEF7D0',
+          200: '#FDEDA1',
+          300: '#FBDE71',
+          400: '#F9CC42',
+          500: '#D9A520',
+          600: '#B8891A',
+          700: '#966814',
+          800: '#754F10',
+          900: '#53380B',
+        },
         // Slate colors from Figma
         slate: {
           50: '#F8FAFC',
@@ -72,9 +86,10 @@ const config: Config = {
         'card-border': '#F1F5F9',
       },
       fontFamily: {
-        // Noto Serif is the primary font from Figma
-        serif: ['Noto Serif', 'Georgia', 'serif'],
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Be Vietnam Pro is the primary font (sans-serif)
+        sans: ['Be Vietnam Pro', 'system-ui', 'sans-serif'],
+        // Lora is the serif font
+        serif: ['Lora', 'Georgia', 'serif'],
       },
       fontSize: {
         // Figma font sizes

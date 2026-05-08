@@ -31,22 +31,20 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="lg:col-span-1">
             {/* Logo */}
-            <div className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 bg-white/10 p-4 rounded-xl w-fit mb-6">
               <Image
-              src={logoCefam}
-              alt="Logo CEFAM - Trung Tâm Mục Vụ Gia Đình Đắc Lộ"
-              width={48}
-              height={48}
-              className="w-12 h-12 object-contain"
-            />
+                src={logoCefam}
+                alt="Logo CEFAM - Trung Tâm Mục Vụ Gia Đình Đắc Lộ"
+                width={48}
+                height={48}
+                className="h-12 w-auto"
+              />
               <div className="flex flex-col">
-                <span className="text-base font-bold text-white font-serif leading-tight">
-                  Mục Vụ Gia Đình
-                  <br />
-                  Đắc Lộ
+                <span className="font-serif font-bold text-lg leading-tight text-white">
+                  Mục Vụ Gia Đình Đắc Lộ
                 </span>
-                <span className="text-[10px] text-white/70 tracking-[0.1em] uppercase font-serif mt-1">
-                  HỘI DÒNG TÊN VIỆT NAM
+                <span className="text-xs text-white/80 uppercase tracking-widest">
+                  Hội Dòng Tên Việt Nam
                 </span>
               </div>
             </div>

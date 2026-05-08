@@ -39,37 +39,37 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
           {/* Hero Content - 8 columns */}
           <div className="lg:col-span-8">
-            <div className="max-w-3xl">
+            <div className="max-w-3xl pt-20 lg:pt-0">
               {/* Badge */}
               <div className="inline-flex items-center rounded-md border border-white/30 bg-white/10 backdrop-blur-sm px-4 py-1.5 text-xs uppercase tracking-widest font-medium text-white mb-6">
                 Thuộc Hội Dòng Tên • Đắc Lộ
               </div>
 
               {/* Heading */}
-              <h1 className="mb-6 text-4xl font-serif font-bold leading-[1.1] text-white md:text-6xl lg:mb-8 lg:text-7xl">
+              <h1 className="mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[96px] font-serif font-bold leading-[1.1] text-white lg:mb-8">
                 Đồng hành gia đình
                 <br />
-                trong <span className="text-accent italic">tình yêu</span> và{' '}
-                <span className="text-accent italic">đức tin</span>
+                trong <span className="text-gold italic">tình yêu</span> và{' '}
+                <span className="text-gold italic">đức tin</span>
               </h1>
 
               {/* Description */}
-              <p className="mb-10 max-w-2xl text-base font-light leading-relaxed text-white/80 md:text-xl lg:mb-12">
+              <p className="mb-8 max-w-2xl text-sm sm:text-base md:text-lg lg:text-xl font-light leading-relaxed text-white/80 lg:mb-10">
                 Trung tâm cung cấp các khóa học, tư vấn mục vụ và chuyên đề nhằm vun đắp đời
                 sống hôn nhân — gia đình theo tinh thần Tin Mừng và linh đạo Dòng Tên.
               </p>
 
               {/* CTA Buttons */}
-              <div className="flex flex-col items-stretch justify-center gap-4 sm:flex-row sm:items-center lg:justify-start">
+              <div className="flex flex-col items-stretch justify-center gap-3 sm:gap-4 sm:flex-row sm:items-center lg:justify-start">
                 <Link
-                  href="/huan-luyen"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors border border-primary bg-accent text-white hover:bg-accent-600 w-full sm:w-auto text-base rounded-full h-14 px-8"
+                  href="/huan-luyen?tab=topical"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors border border-primary bg-gold text-white hover:bg-gold-600 w-full sm:w-auto text-sm sm:text-base rounded-full h-12 sm:h-14 px-6 sm:px-8"
                 >
                   Xem khóa học mới
                 </Link>
                 <Link
                   href="/lien-he"
-                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors border border-white/20 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 w-full sm:w-auto text-base rounded-full h-14 px-8"
+                  className="inline-flex items-center justify-center gap-2 whitespace-nowrap font-medium transition-colors border border-white/20 bg-white/10 backdrop-blur-sm text-white hover:bg-white/20 w-full sm:w-auto text-sm sm:text-base rounded-full h-12 sm:h-14 px-6 sm:px-8"
                 >
                   Đăng ký tư vấn
                 </Link>
@@ -80,7 +80,7 @@ export default function HeroSection() {
           {/* Course Sidebar - 4 columns */}
           <div className="lg:col-span-4 h-full">
             <div className="bg-primary/95 backdrop-blur-md h-full rounded-3xl p-8 text-white shadow-2xl border border-white/10 flex flex-col">
-              <h2 className="text-xl font-serif font-bold mb-8 uppercase tracking-wider text-accent/90">
+              <h2 className="text-xl font-serif font-bold mb-8 uppercase tracking-wider text-gold/90">
                 Khóa học sắp khai giảng
               </h2>
 
@@ -88,13 +88,13 @@ export default function HeroSection() {
                 {upcomingCourses.map((course) => (
                   <Link
                     key={course.id}
-                    href={`/huan-luyen/${course.slug}`}
+                    href={`/khoa-hoc/${course.slug}`}
                     className="group"
                   >
                     <div className="flex gap-4 items-start rounded-2xl border border-white/5 bg-white/5 p-4 transition-colors hover:bg-white/10">
-                      <div className="w-3 h-3 rounded-full bg-accent mt-2 shrink-0 group-hover:scale-125 transition-transform"></div>
+                      <div className="w-3 h-3 rounded-full bg-gold mt-2 shrink-0 group-hover:scale-125 transition-transform"></div>
                       <div className="min-w-0">
-                        <h3 className="font-bold text-lg leading-snug group-hover:text-accent transition-colors line-clamp-2">
+                        <h3 className="font-bold text-lg leading-snug group-hover:text-gold transition-colors line-clamp-2">
                           {course.title}
                         </h3>
                         <p className="text-white/60 text-sm mt-1">{course.date}</p>
@@ -110,8 +110,8 @@ export default function HeroSection() {
               {/* View All Link */}
               <div className="mt-8 pt-8 border-t border-white/10">
                 <Link
-                  href="/huan-luyen"
-                  className="text-sm font-medium flex items-center justify-end gap-2 hover:text-accent transition-colors group"
+                  href="/huan-luyen?tab=topical"
+                  className="text-sm font-medium flex items-center justify-end gap-2 hover:text-gold transition-colors group"
                 >
                   Xem tất cả khóa học
                   <svg

@@ -1,3 +1,7 @@
+import Image from 'next/image';
+import LucideIcon from '@/components/ui/LucideIcon';
+import logoCefam from '@/assets/logo-cefam.png';
+
 export default function HeroTrainingSection() {
   return (
     <section className="relative bg-primary pt-20 lg:pt-[80px] pb-28 lg:pb-36">
@@ -8,13 +12,19 @@ export default function HeroTrainingSection() {
       
       <div className="container mx-auto px-4 lg:px-8">
         <div className="max-w-[672px]">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 mb-6">
-            <div className="bg-white/20 rounded-full px-4 py-2">
-              <span className="text-white text-sm font-semibold font-serif tracking-[0.1em] uppercase">
-                HUẤN LUYỂN & CHUYÊN ĐỀ
-              </span>
-            </div>
+          {/* Logo + Badge */}
+          <div className="mb-4 flex items-center gap-3">
+            <Image
+              src={logoCefam}
+              alt="Logo CEFAM"
+              width={48}
+              height={48}
+              className="h-12 w-12 shrink-0 rounded-full bg-white object-contain p-1 shadow-sm"
+            />
+            <span className="inline-flex items-center rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs text-white font-semibold uppercase tracking-[0.2em]">
+              <LucideIcon name="Sparkles" className="mr-1.5 h-3.5 w-3.5" />
+              Huấn luyện & Chuyên đề
+            </span>
           </div>
           
           {/* Heading */}
