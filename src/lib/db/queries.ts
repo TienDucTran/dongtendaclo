@@ -57,6 +57,18 @@ export async function getProgramById(id: number): Promise<TrainingProgram | null
   return data as TrainingProgram;
 }
 
+export async function getProgramBySlug(slug: string): Promise<TrainingProgram | null> {
+  const { data, error } = await supabase
+    .from('training_programs')
+    .select('*')
+    .eq('slug', slug)
+    .eq('is_active', true)
+    .single();
+
+  if (error) return null;
+  return data as TrainingProgram;
+}
+
 export async function createProgram(input: TrainingProgramInput): Promise<TrainingProgram> {
   const { data, error } = await supabase
     .from('training_programs')

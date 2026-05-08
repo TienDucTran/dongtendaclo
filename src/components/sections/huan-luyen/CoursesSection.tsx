@@ -2,6 +2,9 @@
 
 import { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
+import Pagination from '@/components/ui/Pagination';
+
+const ITEMS_PER_PAGE = 9;
 
 // Filter data - will be populated from API
 const defaultFormats = [
@@ -45,6 +48,9 @@ export default function CoursesSection() {
   const [formats, setFormats] = useState(defaultFormats);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
   
   // Use ref to prevent duplicate fetches in React strict mode
   const hasFetched = useRef(false);
@@ -174,6 +180,25 @@ export default function CoursesSection() {
     setSelectedCategories([]);
     setSelectedAudiences([]);
     setSearchQuery('');
+    setCurrentPage(1); // Reset pagination when clearing filters
+  };
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedFormats, selectedCategories, selectedAudiences, searchQuery]);
+
+  // Pagination
+  const totalPages = Math.ceil(filteredCourses.length / ITEMS_PER_PAGE);
+  const paginatedCourses = useMemo(() => {
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredCourses.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [filteredCourses, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    // Scroll to top of section
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   // Get status badge color
@@ -545,7 +570,7 @@ export default function CoursesSection() {
 
             {/* Course Grid */}
             <div className="grid gap-5 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-              {filteredCourses.map((course) => (
+              {paginatedCourses.map((course) => (
                 <article
                   key={course.id}
                   className="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:border-primary/20 hover:shadow-lg transition-all group"
@@ -650,6 +675,18 @@ export default function CoursesSection() {
                   Xóa tất cả bộ lọc
                 </button>
               </div>
+            )}
+
+            {/* Pagination */}
+            {filteredCourses.length > ITEMS_PER_PAGE && (
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+                totalItems={filteredCourses.length}
+                itemsPerPage={ITEMS_PER_PAGE}
+                className="mt-8"
+              />
             )}
           </div>
         </div>

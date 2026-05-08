@@ -258,7 +258,7 @@ export default function KhoaHocPage() {
           data-testid="filter-courses-programSlug"
         >
           <option value="all">Tất cả chương trình</option>
-          {uniquePrograms.map((program) => (
+          {uniquePrograms.filter((p): p is string => p !== null).map((program) => (
             <option key={program} value={program}>{program}</option>
           ))}
         </select>

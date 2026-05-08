@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { TrainingProgram } from '@/lib/db/index';
 import RichTextEditor from '@/components/ui/RichTextEditor';
+import LucideIcon from '@/components/ui/LucideIcon';
 
 interface ProgramFormModalProps {
   isOpen: boolean;
@@ -273,17 +274,30 @@ export default function ProgramFormModal({ isOpen, onClose, onSubmit, initialDat
             {/* Icon */}
             <div className="space-y-1.5">
               <label className="text-sm font-medium">
-                Icon (tên Lucide)
+                Icon
               </label>
-              <select
-                value={formData.icon}
-                onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
-                className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-              >
-                {lucideIcons.map(icon => (
-                  <option key={icon} value={icon}>{icon}</option>
-                ))}
-              </select>
+              <div className="flex items-center gap-3">
+                {/* Icon Preview */}
+                <div 
+                  className="flex h-9 w-9 items-center justify-center rounded-md border border-input bg-slate-50"
+                  style={{ color: formData.color_hex }}
+                >
+                  <LucideIcon name={formData.icon} className="h-5 w-5" />
+                </div>
+                {/* Icon Select */}
+                <select
+                  value={formData.icon}
+                  onChange={(e) => setFormData(prev => ({ ...prev, icon: e.target.value }))}
+                  className="flex h-9 flex-1 rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                >
+                  {lucideIcons.map(icon => (
+                    <option key={icon} value={icon}>{icon}</option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Icon sẽ hiển thị với màu đã chọn
+              </p>
             </div>
 
             {/* PDF Link */}

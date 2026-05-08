@@ -23,6 +23,7 @@ const config: Config = {
         // Primary colors from Figma - Maroon/Burgundy
         primary: {
           DEFAULT: '#8B1D1D',
+          foreground: '#FFFFFF',
           50: '#FEF2F2',
           100: '#FEE2E2',
           200: '#FECACA',

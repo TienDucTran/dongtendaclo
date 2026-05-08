@@ -12,9 +12,9 @@ export async function createClient() {
         getAll() {
           return cookieStore.getAll();
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
           try {
-            cookiesToSet.forEach(({ name, value }) =>
+            cookiesToSet.forEach(({ name, value }: { name: string; value: string }) =>
               cookieStore.set(name, value)
             );
           } catch {
